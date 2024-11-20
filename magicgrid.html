@@ -1,0 +1,188 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Number Grid</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            flex-direction: column;
+            text-align: center; /* Center all text */
+        }
+        h1 {
+            font-size: 40px;
+            margin-bottom: 20px;
+        }
+        #column-title {
+            font-family: 'Cursive', sans-serif; /* Stylish font */
+            font-size: 50px;
+            color: #333;
+            margin-bottom: 30px;
+        }
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(4, 80px); /* Grid with 4 columns */
+            grid-gap: 10px;
+            margin-bottom: 20px;
+        }
+        .grid div {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 80px;
+            height: 80px;
+            background-color: lightgray;
+            border-radius: 5px;
+            font-size: 24px;
+            font-weight: bold;
+        }
+        .buttons {
+            display: flex;
+            gap: 20px;
+        }
+        .buttons button {
+            padding: 15px 30px;
+            font-size: 24px;
+            border: none;
+            background-color: #4CAF50;
+            color: white;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .buttons button.no {
+            background-color: #f44336;
+        }
+        .hidden {
+            display: none;
+        }
+        .play-again {
+            padding: 15px 30px;
+            font-size: 24px;
+            background-color: #008CBA;
+            color: white;
+            border-radius: 5px;
+            border: none;
+            cursor: pointer;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body background="Bg.png">
+
+    <!-- Title display -->
+    <h1 id="column-title">Is the number you think of in this grid?</h1>
+
+    <!-- Grid display -->
+    <div class="grid" id="number-grid">
+        <!-- Numbers will be dynamically added here -->
+    </div>
+
+    <!-- Yes/No Buttons -->
+    <div class="buttons">
+        <button class="yes" onclick="chooseYes()">Yes</button>
+        <button class="no" onclick="chooseNo()">No</button>
+    </div>
+
+    <!-- Final sum display -->
+    <h1 id="final-sum-display" class="hidden">The number you think<!--  --> is: 0</h1>
+
+    <!-- Play Again button -->
+    <button id="play-again" class="play-again hidden" onclick="playAgain()">Play Again</button>
+
+    <script>
+        // Numbers in the specified columns
+        const columns = [
+            [1, 3, 5, 7, 9, 11, 13, 15, 17, 19, 21, 23, 25, 27, 29, 31],
+            [2, 3, 6, 7, 10, 11, 14, 15, 18, 19, 22, 23, 26, 27, 30, 31],
+            [4, 5, 6, 7, 12, 13, 14, 15, 20, 21, 22, 23, 28, 29, 30, 31],
+            [8, 9, 10, 11, 12, 13, 14, 15, 24, 25, 26, 27, 28, 29, 30, 31],
+            [16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31]
+        ];
+
+        let currentColumn = 0;
+        let sum = 0;
+
+        function updateGridDisplay() {
+            // Update the grid display with the current column of numbers
+            const grid = document.getElementById("number-grid");
+            grid.innerHTML = '';  // Clear the grid
+            columns[currentColumn].forEach(number => {
+                const div = document.createElement("div");
+                div.textContent = number;
+                grid.appendChild(div);
+            });
+
+            // Update the column title (Question)
+            const columnTitle = document.getElementById("column-title");
+            columnTitle.textContent = `Is the number you think of in this grid?`;
+        }
+
+        function chooseYes() {
+            // Add the first number in the current column to the sum
+            sum += columns[currentColumn][0];
+            nextStep();
+        }
+
+        function chooseNo() {
+            // Skip the number and move to the next step
+            nextStep();
+        }
+
+        function nextStep() {
+            // Move to the next column
+            currentColumn++;
+
+            // If all columns have been processed, show the final sum
+            if (currentColumn >= columns.length) {
+                showFinalSum();
+            } else {
+                updateGridDisplay();
+            }
+        }
+
+        function showFinalSum() {
+            // Hide the grid and buttons<!--  -->
+            document.getElementById("number-grid").classList.add("hidden");
+            document.querySelector(".buttons").classList.add("hidden");
+            document.getElementById("column-title").classList.add("hidden");
+
+            // Show the final sum as the guessed number and "Play Again" button
+            const finalSumDisplay = document.getElementById("final-sum-display");
+            finalSumDisplay.textContent = "The number you think is: " + sum;
+            finalSumDisplay.classList.remove("hidden");
+
+            const playAgainButton = document.getElementById("play-again");
+            playAgainButton.classList.remove("hidden");
+        }
+
+        function playAgain() {
+            // Reset everything and start again
+            currentColumn = 0;
+            sum = 0;
+
+            // Show the grid and buttons again
+            document.getElementById("number-grid").classList.remove("hidden");
+            document.querySelector(".buttons").classList.remove("hidden");
+            document.getElementById("column-title").classList.remove("hidden");
+
+            // Hide the final sum and "Play Again" button
+            document.getElementById("final-sum-display").classList.add("hidden");
+            document.getElementById("play-again").classList.add("hidden");
+
+            // Update the grid display with the first column
+            updateGridDisplay();
+        }
+
+        // Initialize the grid display on page load
+        updateGridDisplay();
+    </script>
+
+</body>
+</html>
